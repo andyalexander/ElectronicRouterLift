@@ -15,10 +15,8 @@
 #define TM_CLOCK      8
 #define TM_DIO        9
 
-// const uint32_t LOOP_DELAY_MS = 1 * 100;
-// volatile int64_t AbsPos , AbsPosBase;
-const uint32_t LOOP_DELAY_MICROS = (1000 / UI_REFRESH_RATE_HZ) * 1000;
-const uint32_t ISR_DELAY_MICROS = 100;
+const unsigned long LOOP_DELAY_MICROS = 100000; //(1000 / UI_REFRESH_RATE_HZ) * 1000;
+const unsigned long  ISR_DELAY_MICROS = 100;
 unsigned long lastTimeISR;
 unsigned long lastTimeUI;
 
@@ -52,11 +50,11 @@ void setup() {
 
 void loop() {
   unsigned long m = micros();
-  Serial.println((m-lastTimeUI)>LOOP_DELAY_MICROS);
+
+  // Serial.println((m-lastTimeUI)>LOOP_DELAY_MICROS);
   // service the user interface
   if (m<lastTimeUI || (m-lastTimeUI)>LOOP_DELAY_MICROS)
   {
-    Serial.println("loop");
     userInterface.loop();    
     lastTimeUI = m; 
   }

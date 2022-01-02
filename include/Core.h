@@ -35,6 +35,7 @@ public:
     void powerToggle(void);
     bool getPowerState(void);
     bool getLimitState(void); // are we at a limit
+    int32_t getStepsFromHeight(double height);
 
     void setHeightDelta(double height);
 };
@@ -52,6 +53,11 @@ inline bool Core :: isAlarm()
 inline bool Core :: isReady()
 {
     return isMove;
+}
+
+inline int32_t Core :: getStepsFromHeight(double height)
+{
+    return stepperDrive->getStepsFromHeight(height);
 }
 
 inline void Core :: myISR( void )

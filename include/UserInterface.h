@@ -29,6 +29,9 @@ private:
 
     bool isReady;                    // is the system ready for an input
 
+    unsigned long startMicros;      // start time of ISR 
+    int32_t startSteps;             // total steps to move at start
+
     const MESSAGE *message;
     uint16_t messageTime;
 

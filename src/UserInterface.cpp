@@ -26,7 +26,7 @@ UserInterface :: UserInterface(ControlPanel *controlPanel, Core *core)
     this->heightPrevious = 999.9;
     this->heightStep = HEIGHT_STEP_LARGE;
 
-    this->isReady = toUpperCase;
+    this->isReady = true;
 
     this->keys.all = 0xff;
 
@@ -88,8 +88,13 @@ void UserInterface :: loop( void )
     // ready state changed
     if (this->isReady != !core->isReady())
     {
-        Serial.print("isReady change: ");
-        Serial.println(micros());
+        unsigned long m = micros() - this->startMicros;
+        Serial.print("Done in: ");
+        Serial.print(m);
+        Serial.print(" (");
+        Serial.print( round(1000000/(m/abs(this->startSteps))) );
+        Serial.println(" pps)");
+
         this->isReady = !(this->isReady);
         this->updateLED();
 
@@ -175,13 +180,17 @@ void UserInterface :: loop( void )
 
     if ( keys.bit.GO_TARGET)
     {
-        if (this->isReady)
+        if (this->isReady && this->heightTarget != this->heightCurrent)
         {
-            Serial.println("Go...");
             this->isReady = false;
             core->setHeightDelta(this->heightTarget - this->heightCurrent);
 
             this->updateLED();  
+
+            Serial.print("Go...");
+            this->startMicros = micros();
+            this->startSteps = core->getStepsFromHeight(this->heightTarget - this->heightCurrent);
+
         }    
     }
 
