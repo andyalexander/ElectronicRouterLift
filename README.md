@@ -17,7 +17,7 @@ This initial version is a PoC.
 
 ## Hardware details
 In case useful, some details of my hardware / router setup are below
-* I use an ATMEL ICE debig probe to load to the devices, if you just use standard USB / serial you will need to edit the platformio.ini file; I have also hard coded my USB port so you will need to change this too ;)
+* I use an ATMEL ICE debug probe to load to the devices, if you just use standard USB / serial you will need to edit the platformio.ini file; I have also hard coded my USB port so you will need to change this too ;)
 * Routerlift thread pitch = 1/32"
 * Stepper: NEMA 14
 * Arduino: NANO (clone)
