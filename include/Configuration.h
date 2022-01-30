@@ -20,16 +20,16 @@
 
 // Steps and microsteps
 #define STEPPER_MICROSTEPS 3
-#define STEPPER_RESOLUTION 1000
+#define STEPPER_RESOLUTION 400
 
 // Step, direction and enable pins are normally active-high
 #define INVERT_STEP_PIN true
 #define INVERT_DIRECTION_PIN true
-#define INVERT_ENABLE_PIN true
+// #define INVERT_ENABLE_PIN true
 #define INVERT_ALARM_PIN true
 
 // Enable servo alarm feedback
-#define USE_ALARM_PIN
+// #define USE_ALARM_PIN
 
 // the step for each height change
 #define HEIGHT_STEP_SMALL 0.1
@@ -38,6 +38,10 @@
 #define DISPLAY_BRIGHTNESS 5
 
 
+// SENSORS
+#define SENSOR_TOP   A0
+#define USE_SENSOR_TOP  true
+#define SENSOR_TOP_THRESHOLD 100
 
 //================================================================================
 //                               CPU / TIMING

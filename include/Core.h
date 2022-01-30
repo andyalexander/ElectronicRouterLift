@@ -17,6 +17,8 @@ private:
     volatile double heightDelta;      // how much to move by
     volatile bool isMove;
 
+    int16_t limitPanicSteps;            // number of steps taken under the limit condition
+
     int32_t feedRatio(uint32_t count);
 
 public:
@@ -38,6 +40,7 @@ public:
     int32_t getStepsFromHeight(double height);
 
     void setHeightDelta(double height);
+    int32_t getStepsRemaining(void);
 };
 
 inline void Core :: setHeightDelta(double height)
@@ -52,7 +55,7 @@ inline bool Core :: isAlarm()
 
 inline bool Core :: isReady()
 {
-    return isMove;
+    return !isMove && this->getPowerState();
 }
 
 inline int32_t Core :: getStepsFromHeight(double height)
@@ -60,8 +63,23 @@ inline int32_t Core :: getStepsFromHeight(double height)
     return stepperDrive->getStepsFromHeight(height);
 }
 
+inline int32_t Core :: getStepsRemaining()
+{
+    return stepperDrive->getStepsRemaining();
+}
+
 inline void Core :: myISR( void )
 {
+    if (getLimitState())
+    {
+        digitalWrite(LED_BUILTIN, HIGH);
+        this->stepperDrive->powerSet(true);         // stepper is enable low
+        // Serial.println("Sensor tripped");
+    }
+    else{
+        digitalWrite(LED_BUILTIN,LOW);
+    }
+
     if( abs(heightDelta) > 0.01) {           // if we need to move...
         Serial.print("Need to move: ");
         Serial.print(heightDelta);
@@ -73,12 +91,6 @@ inline void Core :: myISR( void )
         Serial.print(desiredSteps);
         Serial.println("steps)");
 
-
-        // remember values for next time
-        // previousSpindlePosition = spindlePosition;
-        // previousFeedDirection = feedDirection;
-        // previousFeed = feed;
-
         // service the stepper drive state machine
         heightDelta = 0.0;
     }
@@ -86,7 +98,6 @@ inline void Core :: myISR( void )
     if (stepperDrive->getStepsRemaining() != 0)
     {
         isMove = true;
-        // Serial.println("step");
         stepperDrive->myISR();
     } else {
         isMove = false;

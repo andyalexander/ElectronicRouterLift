@@ -8,7 +8,7 @@
 #define STEP_PIN        3
 #define DIRECTION_PIN   4
 #define ENABLE_PIN      5
-#define ALARM_PIN       10
+// #define ALARM_PIN       10
 
 #define POSITION_TOL    1               // steps tolerance for 'exact' match
 class StepperDrive
@@ -42,6 +42,7 @@ public:
     void myISR(void);
 
     void powerToggle(void);
+    void powerSet(bool state);
     bool getPowerState(void);
 };
 
@@ -60,7 +61,6 @@ inline bool StepperDrive :: isAlarm()
 {
 #ifdef USE_ALARM_PIN
     return digitalRead(ALARM_PIN);
-    // return GPIO_GET_ALARM;
 #else
     return false;
 #endif
@@ -75,6 +75,7 @@ inline void StepperDrive :: myISR(void)
         if( this->stepsToMove < 0) {
             digitalWrite(STEP_PIN, LOW);
             this->state = 2;
+            // Serial.println("L");
         }
         else if( this->stepsToMove > 0 ) {
             digitalWrite(DIRECTION_PIN, HIGH);
@@ -87,6 +88,7 @@ inline void StepperDrive :: myISR(void)
         if( this->stepsToMove > 0 ) {
             digitalWrite(STEP_PIN, LOW);
             this->state = 3;
+            // Serial.println("L");
         }
         else if( this->stepsToMove < 0) {
             digitalWrite(DIRECTION_PIN, LOW);
@@ -100,6 +102,7 @@ inline void StepperDrive :: myISR(void)
         // GPIO_CLEAR_STEP;
         this->stepsToMove++;
         this->state = 0;
+            // Serial.println("H");
 
         break;
 
@@ -108,7 +111,7 @@ inline void StepperDrive :: myISR(void)
         digitalWrite(STEP_PIN, HIGH);
         this->stepsToMove--;
         this->state = 1;
-
+        // Serial.println("H");
         break;
     }
 }

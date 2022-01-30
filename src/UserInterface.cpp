@@ -21,12 +21,12 @@ UserInterface :: UserInterface(ControlPanel *controlPanel, Core *core)
     this->controlPanel = controlPanel;
     this->core = core;
 
-    this->heightCurrent = 10.4;                  // start from zero
+    this->heightCurrent = 0;                  // start from zero
     this->heightTarget = this->heightCurrent;
     this->heightPrevious = 999.9;
     this->heightStep = HEIGHT_STEP_LARGE;
 
-    this->isReady = true;
+    this->isReady = this->core->isReady();
 
     this->keys.all = 0xff;
 
@@ -45,10 +45,11 @@ LED_REG UserInterface::calculateLEDs()
 
     // and add a few of our own
     leds.bit.POWER = this->core->getPowerState();
-    leds.bit.LIMIT = this->core->getLimitState();
+    // leds.bit.LIMIT = this->core->getLimitState();
     leds.bit.STEP_BIG = this->heightStep == HEIGHT_STEP_LARGE;
     leds.bit.STEP_SMALL = !leds.bit.STEP_BIG;
     leds.bit.READY = this->isReady;
+    // leds.bit.READY = this->core->isReady();
 
     return leds;
 }
@@ -86,22 +87,25 @@ void UserInterface :: loop( void )
     overrideMessage();
 
     // ready state changed
-    if (this->isReady != !core->isReady())
+    if (this->isReady != core->isReady())
     {
-        unsigned long m = micros() - this->startMicros;
-        Serial.print("Done in: ");
-        Serial.print(m);
-        Serial.print(" (");
-        Serial.print( round(1000000/(m/abs(this->startSteps))) );
-        Serial.println(" pps)");
-
-        this->isReady = !(this->isReady);
+        this->isReady = this->core->isReady();
         this->updateLED();
 
-        this->heightCurrent = this->heightTarget;
-        this->heightPrevious = 999.9;
-        controlPanel->setHeightDelta(0.0);
-        controlPanel->setHeightCurrent(this->heightCurrent);
+        if (core->getStepsRemaining() == 0)
+        {
+            unsigned long m = micros() - this->startMicros;
+            Serial.print("Done in: ");
+            Serial.print(m);
+            Serial.print(" (");
+            Serial.print( round(1000000/(m/abs(this->startSteps))) );
+            Serial.println(" pps)");
+
+            this->heightCurrent = this->heightTarget;
+            this->heightPrevious = 999.9;
+            controlPanel->setHeightDelta(0.0);
+            controlPanel->setHeightCurrent(this->heightCurrent);
+        }
     }
     
 
@@ -112,11 +116,14 @@ void UserInterface :: loop( void )
     if( keys.bit.SET_ZERO)
     {
         // Serial.println("Zero...");
-        if (this->isReady)
+        // if (this->isReady)
+        if (this->core->isReady())
         {
+            this->heightCurrent = 0.0;
             this->heightPrevious = 999.9;
             this->heightTarget = this->heightCurrent;
             controlPanel->setHeightDelta(0.0);
+            controlPanel->setHeightCurrent(this->heightCurrent);
         }
     }
 
@@ -151,7 +158,8 @@ void UserInterface :: loop( void )
     
     if( keys.bit.UP )
     {
-        if (this->isReady)
+        // if (this->isReady)
+        if (this->core->isReady())
         {
             if (this->heightPrevious == 999.9){this->heightPrevious = this->heightCurrent;}
 
@@ -162,7 +170,8 @@ void UserInterface :: loop( void )
     }
     if( keys.bit.DOWN )
     {
-        if (this->isReady)
+        // if (this->isReady)
+        if (this->core->isReady())
         {
             if (this->heightPrevious == 999.9){this->heightPrevious = this->heightCurrent;}
 
@@ -180,7 +189,8 @@ void UserInterface :: loop( void )
 
     if ( keys.bit.GO_TARGET)
     {
-        if (this->isReady && this->heightTarget != this->heightCurrent)
+        // if (this->isReady && this->heightTarget != this->heightCurrent)
+        if (this->core->isReady() && this->heightTarget != this->heightCurrent)
         {
             this->isReady = false;
             core->setHeightDelta(this->heightTarget - this->heightCurrent);
