@@ -30,12 +30,13 @@ void StepperDrive :: initHardware(void)
     pinMode(ENABLE_PIN, OUTPUT);
     // pinMode(ALARM_PIN, INPUT);
     
-    digitalWrite(STEP_PIN, INVERT_STEP_PIN^LOW);                    // ^ is XOR
+    digitalWrite(STEP_PIN, INVERT_STEP_PIN^LOW);                // ^ is XOR
     digitalWrite(DIRECTION_PIN, INVERT_DIRECTION_PIN^LOW);
+    powerSet(false);                                            // start with power off 
 
     // digitalWrite(LED_BUILTIN, HIGH);
 
-    digitalWrite(ENABLE_PIN,  INVERT_ENABLE_PIN ^ (this->power));  // start off
+    Serial.println("Stepper initialised...");
 }
 
 void StepperDrive :: powerToggle(void)

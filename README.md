@@ -26,7 +26,8 @@ In case useful, some details of my hardware / router setup are below
 * Stepper driver: A4988 stepper driver (with heatsink) - these are good up to about 2a which is about right for my NEMA14 motor
 * Pulley and belt: HTD 15mm, 3mm pitch
 
-* small diam = 14.5mm; large diam = 45; belt = 261 mm  -> 82mm c2c
+* small diam = 16mm; large diam = 45; belt = 261 mm  -> 82mm c2c
+* small = 18T  (24t)        large = 48t  -> drive ratio 3:1
 
 * NEMA 14 size:  holes c2c = 26   case = 35   core = 24
 * NEMA 17 size:  holes c2c = 34   case = 42   core = 30

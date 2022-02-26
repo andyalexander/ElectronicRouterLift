@@ -16,7 +16,7 @@
 #define TM_DIO        9
 
 const unsigned long LOOP_DELAY_MICROS = 100000; //(1000 / UI_REFRESH_RATE_HZ) * 1000;
-const unsigned long  ISR_DELAY_MICROS = 500;
+const unsigned long  ISR_DELAY_MICROS = 200;
 unsigned long lastTimeISR;
 unsigned long lastTimeUI;
 
@@ -58,8 +58,8 @@ void setup() {
 void loop() {
   unsigned long m = micros();
 
-  // Serial.println((m-lastTimeUI)>LOOP_DELAY_MICROS);
   // service the user interface
+  // Serial.println((m-lastTimeUI)>LOOP_DELAY_MICROS);
   if (m<lastTimeUI || (m-lastTimeUI)>LOOP_DELAY_MICROS)
   {
     userInterface.loop();    
