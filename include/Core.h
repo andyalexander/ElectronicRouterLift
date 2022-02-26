@@ -70,37 +70,40 @@ inline int32_t Core :: getStepsRemaining()
 
 inline void Core :: myISR( void )
 {
+    // first check the limit switches
     if (getLimitState())
     {
         digitalWrite(LED_BUILTIN, HIGH);
-        this->stepperDrive->powerSet(true);         // stepper is enable low
+        this->stepperDrive->powerSet(false);         // stop the motor if at limit
         // Serial.println("Sensor tripped");
     }
     else{
+        // we are not at the limit, so can move
         digitalWrite(LED_BUILTIN,LOW);
-    }
 
-    if( abs(heightDelta) > 0.01) {           // if we need to move...
-        Serial.print("Need to move: ");
-        Serial.print(heightDelta);
-        // calculate the desired stepper position
-        int32_t desiredSteps =  stepperDrive->getStepsFromHeight(heightDelta);
+        // if we need have a movement request from UI
+        if( abs(heightDelta) > 0.01) {           
+            Serial.print("Need to move: ");
+            Serial.print(heightDelta);
 
-        stepperDrive->setStepsToMove(desiredSteps);
-        Serial.print(" (");
-        Serial.print(desiredSteps);
-        Serial.println("steps)");
+            // calculate the desired stepper position
+            int32_t desiredSteps =  stepperDrive->getStepsFromHeight(heightDelta);
+            heightDelta = 0.0;                  // reset the height delta as have converted to steps
 
-        // service the stepper drive state machine
-        heightDelta = 0.0;
-    }
+            stepperDrive->setStepsToMove(desiredSteps);
+            Serial.print(" (");
+            Serial.print(desiredSteps);
+            Serial.println("steps)");
+        }
 
-    if (stepperDrive->getStepsRemaining() != 0)
-    {
-        isMove = true;
-        stepperDrive->myISR();
-    } else {
-        isMove = false;
+        // if we need to move physical steps
+        if (stepperDrive->getStepsRemaining() != 0)
+        {
+            isMove = true;
+            stepperDrive->myISR();
+        } else {
+            isMove = false;
+        }
     }
 }
 

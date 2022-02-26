@@ -2,7 +2,7 @@
 
 StepperDrive :: StepperDrive(void)
 {
-    this->power = true;                             // driver is enable low
+    this->power = false;                             // driver is enable low
     resetPosition();
 }
 
@@ -30,24 +30,24 @@ void StepperDrive :: initHardware(void)
     pinMode(ENABLE_PIN, OUTPUT);
     // pinMode(ALARM_PIN, INPUT);
     
-    digitalWrite(STEP_PIN, HIGH);
-    digitalWrite(DIRECTION_PIN, LOW);
+    digitalWrite(STEP_PIN, INVERT_STEP_PIN^LOW);                    // ^ is XOR
+    digitalWrite(DIRECTION_PIN, INVERT_DIRECTION_PIN^LOW);
 
     // digitalWrite(LED_BUILTIN, HIGH);
 
-    digitalWrite(ENABLE_PIN, this->power);  // start off
+    digitalWrite(ENABLE_PIN,  INVERT_ENABLE_PIN ^ (this->power));  // start off
 }
 
 void StepperDrive :: powerToggle(void)
 {
     this->power = ! this->power;
-    digitalWrite(ENABLE_PIN, this->power);
+    digitalWrite(ENABLE_PIN, INVERT_ENABLE_PIN ^ (this->power));
 }
 
 void StepperDrive :: powerSet(bool state)
 {
     this->power = state;
-    digitalWrite(ENABLE_PIN, state);
+    digitalWrite(ENABLE_PIN, INVERT_ENABLE_PIN ^ state);
 }
 
 bool StepperDrive :: getPowerState()

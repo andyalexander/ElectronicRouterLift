@@ -73,12 +73,12 @@ inline void StepperDrive :: myISR(void)
     case 0:
         // Step = 0; Dir = 0
         if( this->stepsToMove < 0) {
-            digitalWrite(STEP_PIN, LOW);
+            digitalWrite(STEP_PIN, INVERT_STEP_PIN ^ HIGH);
             this->state = 2;
-            // Serial.println("L");
+            // Serial.println("H");
         }
         else if( this->stepsToMove > 0 ) {
-            digitalWrite(DIRECTION_PIN, HIGH);
+            digitalWrite(DIRECTION_PIN, INVERT_DIRECTION_PIN ^ HIGH);
             this->state = 1;
         }
         break;
@@ -86,32 +86,31 @@ inline void StepperDrive :: myISR(void)
     case 1:
         // Step = 0; Dir = 1
         if( this->stepsToMove > 0 ) {
-            digitalWrite(STEP_PIN, LOW);
+            digitalWrite(STEP_PIN, INVERT_STEP_PIN ^ HIGH);
             this->state = 3;
-            // Serial.println("L");
+            // Serial.println("H");
         }
         else if( this->stepsToMove < 0) {
-            digitalWrite(DIRECTION_PIN, LOW);
+            digitalWrite(DIRECTION_PIN, INVERT_DIRECTION_PIN ^ LOW);
             this->state = 0;
         }
         break;
 
     case 2:
         // Step = 1; Dir = 0
-        digitalWrite(STEP_PIN, HIGH);
+        digitalWrite(STEP_PIN, INVERT_STEP_PIN ^ LOW);
         // GPIO_CLEAR_STEP;
         this->stepsToMove++;
         this->state = 0;
-            // Serial.println("H");
-
+        // Serial.println("L");
         break;
 
     case 3:
         // Step = 1; Dir = 1
-        digitalWrite(STEP_PIN, HIGH);
+        digitalWrite(STEP_PIN, INVERT_STEP_PIN ^ LOW);
         this->stepsToMove--;
         this->state = 1;
-        // Serial.println("H");
+        // Serial.println("L");
         break;
     }
 }
