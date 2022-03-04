@@ -40,6 +40,8 @@ private:
     void overrideMessage( void );
     void updateLED(void);
 
+    void undo(void);
+
 public:
     UserInterface(ControlPanel *controlPanel, Core *core);
 

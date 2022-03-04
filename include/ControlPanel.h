@@ -36,11 +36,12 @@ struct KEY_BITS
     uint16_t POWER:1;
     uint16_t FULL_RAISE:1;
     uint16_t TOGGLE_STEP:1;
-    uint16_t DOWN:1;
-    uint16_t UP:1;
-    uint16_t GO_TARGET:1;
-    uint16_t UNDO:1;
+    // uint16_t UNDO:1;
     uint16_t SET_ZERO:1;
+    uint16_t GO_TARGET:1;
+    uint16_t DOWN:1;
+    uint16_t BUTTON7;
+    uint16_t UP:1;
     };
 
 typedef union KEY_REG

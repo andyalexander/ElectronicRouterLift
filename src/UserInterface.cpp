@@ -81,6 +81,19 @@ void UserInterface :: overrideMessage( void )
     }
 }
 
+void UserInterface :: undo( void )
+{
+    // Serial.println("Undo...");
+    // if (this->heightPrevious != 999.9 && this->isReady)
+    // {
+        this->heightCurrent = this->heightPrevious;
+        this->heightTarget = this->heightCurrent;
+        controlPanel->setHeightDelta(0.0);
+        controlPanel->setHeightCurrent(this->heightCurrent);
+        this->heightPrevious = 999.9;
+    // }
+}
+
 void UserInterface :: loop( void )
 {
     // display an override message, if there is one
@@ -143,18 +156,10 @@ void UserInterface :: loop( void )
         this->updateLED();
     }
 
-    if (keys.bit.UNDO)
-    {
-        // Serial.println("Undo...");
-        if (this->heightPrevious != 999.9 && this->isReady)
-        {
-            this->heightCurrent = this->heightPrevious;
-            this->heightTarget = this->heightCurrent;
-            controlPanel->setHeightDelta(0.0);
-            controlPanel->setHeightCurrent(this->heightCurrent);
-            this->heightPrevious = 999.9;
-        }
-    }
+    // if (keys.bit.UNDO)
+    // {
+            // this->undo();
+    // }
     
     if( keys.bit.UP )
     {
@@ -183,6 +188,10 @@ void UserInterface :: loop( void )
 
     if( keys.bit.POWER)
     {
+        // if already on, then undo, and turn off
+        if (core->getPowerState()){
+            this->undo();
+        }
         core->powerToggle();
         this->updateLED();
     }
