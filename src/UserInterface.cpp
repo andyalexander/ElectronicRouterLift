@@ -85,13 +85,18 @@ void UserInterface :: undo( void )
 {
     // Serial.println("Undo...");
     // if (this->heightPrevious != 999.9 && this->isReady)
-    // {
+    if (this->heightPrevious != 999.9)
+    {
+        this->heightCurrent = 0.0;
+    }
+    else {
         this->heightCurrent = this->heightPrevious;
-        this->heightTarget = this->heightCurrent;
-        controlPanel->setHeightDelta(0.0);
-        controlPanel->setHeightCurrent(this->heightCurrent);
-        this->heightPrevious = 999.9;
-    // }
+    }
+
+    this->heightTarget = this->heightCurrent;
+    controlPanel->setHeightDelta(0.0);
+    controlPanel->setHeightCurrent(this->heightCurrent);
+    // this->heightPrevious = 999.9;
 }
 
 void UserInterface :: loop( void )

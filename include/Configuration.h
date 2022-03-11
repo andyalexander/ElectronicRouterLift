@@ -24,7 +24,7 @@
 
 // Step, direction and enable pins are normally active-high
 #define INVERT_STEP_PIN true
-#define INVERT_DIRECTION_PIN true
+#define INVERT_DIRECTION_PIN false
 #define INVERT_ENABLE_PIN true
 #define INVERT_ALARM_PIN true
 

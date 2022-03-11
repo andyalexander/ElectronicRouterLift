@@ -40,7 +40,7 @@ struct KEY_BITS
     uint16_t SET_ZERO:1;
     uint16_t GO_TARGET:1;
     uint16_t DOWN:1;
-    uint16_t BUTTON7;
+    uint16_t BUTTON7:1;
     uint16_t UP:1;
     };
 
@@ -92,9 +92,7 @@ public:
     // set the values to display
     void setHeightCurrent(double height);
     void setHeightDelta(double height);
-    // void setValueLeft(const char *value);
-    // void setValueRight(const char *value);
-
+  
     // set the LED states
     void setLEDs(LED_REG leds);
 
@@ -124,11 +122,6 @@ inline void ControlPanel :: setHeightDelta(double height)
 {
     this->heightDelta = height;
 }
-
-// inline void ControlPanel :: setValue(const char *value)
-// {
-//     this->value = value;
-// }
 
 inline void ControlPanel :: setLEDs(LED_REG leds)
 {

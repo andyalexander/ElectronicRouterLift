@@ -25,15 +25,9 @@ void ControlPanel :: sendData()
 {
     uint16_t ledMask = this->leds.all;
 
-    // uint16_t briteVal = 0x80;
-    // if( this->brightness > 0 ) {
-    //     this->display->brightness(this->brightness);
-    // }
-
     char values1[6];  // 4 chars + decimal point + terminator
     char values2[6];
   
-    // snprintf(values1, 5, "%2f", 3.7); 
     dtostrf(this->heightCurrent+this->heightDelta,5,1,values2);             // rhs shows the total height after move
     dtostrf(this->heightDelta,5,1,values1);                                 // lhs shows the delta
 
