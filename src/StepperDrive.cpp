@@ -22,6 +22,14 @@ int32_t StepperDrive :: getStepsFromHeight(double height)
     return steps;
 }
 
+double StepperDrive :: getHeightFromSteps(int32_t steps)
+{
+    double revolutions = (double)steps / (double)(STEPPER_RESOLUTION*STEPPER_MICROSTEPS);
+    double height = (MM_PER_INCH / LEADSCREW_TPI) * revolutions;
+    return height;
+
+}
+
 
 void StepperDrive :: initHardware(void)
 {

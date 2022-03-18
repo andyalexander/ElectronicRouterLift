@@ -4,15 +4,6 @@
 #include <Arduino.h>
 #include <TM1638plus.h>
 
-// #define LED_READY (1<<7)
-// #define LED_LIMIT (1<<6)
-// #define LED_6 (1<<5)
-// #define LED_5 (1<<4)
-// #define LED_4 (1<<3)
-// #define LED_3 (1<<2)
-// #define LED_2 (1<<1)
-// #define LED_POWER (1)
-
 struct LED_BITS
 {
     uint16_t POWER:1;
@@ -36,7 +27,6 @@ struct KEY_BITS
     uint16_t POWER:1;
     uint16_t FULL_RAISE:1;
     uint16_t TOGGLE_STEP:1;
-    // uint16_t UNDO:1;
     uint16_t SET_ZERO:1;
     uint16_t GO_TARGET:1;
     uint16_t DOWN:1;

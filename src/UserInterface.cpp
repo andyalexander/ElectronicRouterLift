@@ -26,6 +26,8 @@ UserInterface :: UserInterface(ControlPanel *controlPanel, Core *core)
     this->heightPrevious = 999.9;
     this->heightStep = HEIGHT_STEP_LARGE;
 
+    this->heightHome =  MAX_TRAVEL;                // assumes first home will be up
+
     this->isReady = this->core->isReady();
 
     this->keys.all = 0xff;
@@ -45,7 +47,7 @@ LED_REG UserInterface::calculateLEDs()
 
     // and add a few of our own
     leds.bit.POWER = this->core->getPowerState();
-    // leds.bit.LIMIT = this->core->getLimitState();
+    leds.bit.LIMIT = this->core->getLimitState();
     leds.bit.STEP_BIG = this->heightStep == HEIGHT_STEP_LARGE;
     leds.bit.STEP_SMALL = !leds.bit.STEP_BIG;
     leds.bit.READY = this->isReady;
@@ -85,7 +87,7 @@ void UserInterface :: undo( void )
 {
     // Serial.println("Undo...");
     // if (this->heightPrevious != 999.9 && this->isReady)
-    if (this->heightPrevious != 999.9)
+    if (this->heightPrevious == 999.9)
     {
         this->heightCurrent = 0.0;
     }
@@ -108,7 +110,7 @@ void UserInterface :: loop( void )
     if (this->isReady != core->isReady())
     {
         this->isReady = this->core->isReady();
-        this->updateLED();
+        // this->updateLED();
 
         if (core->getStepsRemaining() == 0)
         {
@@ -133,7 +135,7 @@ void UserInterface :: loop( void )
     // respond to keypresses
     if( keys.bit.SET_ZERO)
     {
-        // Serial.println("Zero...");
+        Serial.println("Zero...");
         // if (this->isReady)
         if (this->core->isReady())
         {
@@ -147,7 +149,7 @@ void UserInterface :: loop( void )
 
     if (keys.bit.TOGGLE_STEP)
     {
-        // Serial.println("Press: toggle step");
+        Serial.println("Press: toggle step");
         // Serial.println(this->heightStep);
 
         if ( this->heightStep == HEIGHT_STEP_LARGE ) 
@@ -160,16 +162,11 @@ void UserInterface :: loop( void )
 
         this->updateLED();
     }
-
-    // if (keys.bit.UNDO)
-    // {
-            // this->undo();
-    // }
     
     if( keys.bit.UP )
     {
         // if (this->isReady)
-        if (this->core->isReady())
+        if (this->core->isReady() && !this->core->getLimitState())          // only move up if not at limit
         {
             if (this->heightPrevious == 999.9){this->heightPrevious = this->heightCurrent;}
 
@@ -183,11 +180,14 @@ void UserInterface :: loop( void )
         // if (this->isReady)
         if (this->core->isReady())
         {
-            if (this->heightPrevious == 999.9){this->heightPrevious = this->heightCurrent;}
+            if (this->heightPrevious == 999.9){
+                this->heightPrevious = this->heightCurrent;
+            }
 
             this->heightTarget -= this->heightStep;
             controlPanel->setHeightDelta(this->heightTarget - this->heightCurrent);
             controlPanel->setHeightCurrent(this->heightCurrent);
+            // Serial.println(this->heightTarget);
         }
     }
 
@@ -197,8 +197,9 @@ void UserInterface :: loop( void )
         if (core->getPowerState()){
             this->undo();
         }
+
+        core->cancelHome();
         core->powerToggle();
-        this->updateLED();
     }
 
     if ( keys.bit.GO_TARGET)
@@ -209,15 +210,49 @@ void UserInterface :: loop( void )
             this->isReady = false;
             core->setHeightDelta(this->heightTarget - this->heightCurrent);
 
-            this->updateLED();  
+            // this->updateLED();  
 
             Serial.print("Go...");
             this->startMicros = micros();
             this->startSteps = core->getStepsFromHeight(this->heightTarget - this->heightCurrent);
-
         }    
     }
 
+    if (keys.bit.FULL_RAISE){
+        Serial.println("Full raise");       // go to either limit
+
+        // double target = 0;
+        
+        // if (this->heightHome == MAX_TRAVEL) {
+        //     this->heightHome = this->heightCurrent;
+        //     target = MAX_TRAVEL;
+        // }
+        // else {
+        //     target = this->heightHome;
+        //     this->heightHome = MAX_TRAVEL;
+        // }
+
+        // core->setHeightDelta(MAX_TRAVEL);
+
+        int32_t prevMoved = this->core->stepperDrive->getStepsMoved();
+        this->core->stepperDrive->resetStepsMoved();
+
+        int32_t toMove = this->core->stepperDrive->getStepsFromHeight(MAX_TRAVEL);
+        if (this->core->getLimitState()){
+            Serial.println("homing, but at limit");
+            toMove = -prevMoved;
+            Serial.println(toMove);
+        }
+        
+        this->isReady = false;
+        this->core->isHoming = true;
+        double height = core->getHeightFromSteps(toMove);
+        Serial.println(height);
+        core->setHeightDelta(height);
+        // core->stepperDrive->setStepsToMove(toMove);
+    }
+
     // write data out to the display
+    this->updateLED();
     controlPanel->refresh();
 }

@@ -24,6 +24,7 @@ private:
     double heightCurrent;
     double heightTarget;
     double heightPrevious;
+    double heightHome;              // holds the switchable home values
 
     double heightStep;              // step size
 

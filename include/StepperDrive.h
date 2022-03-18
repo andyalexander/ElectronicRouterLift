@@ -18,6 +18,7 @@ private:
     // Current position of the motor, in steps
     //
     int32_t stepsToMove;
+    int32_t stepsMoved;     // steps moved in last action
 
     //
     // current state-machine state
@@ -35,7 +36,11 @@ public:
 
     void setStepsToMove(int32_t steps);
     int32_t getStepsFromHeight(double height);
+    double getHeightFromSteps(int32_t steps);
     int32_t getStepsRemaining(void);
+    
+    void resetStepsMoved(void);
+    int32_t getStepsMoved(void);
 
     bool isAlarm();
 
@@ -55,6 +60,14 @@ inline void StepperDrive :: setStepsToMove(int32_t steps)
 inline int32_t StepperDrive :: getStepsRemaining(void)
 {
     return this->stepsToMove;
+}
+
+inline void StepperDrive :: resetStepsMoved(void){
+    this->stepsMoved = 0;
+}
+
+inline int32_t StepperDrive :: getStepsMoved(void) {
+    return this->stepsMoved;
 }
 
 inline bool StepperDrive :: isAlarm()
@@ -101,6 +114,7 @@ inline void StepperDrive :: myISR(void)
         digitalWrite(STEP_PIN, INVERT_STEP_PIN ^ LOW);
         // GPIO_CLEAR_STEP;
         this->stepsToMove++;
+        this->stepsMoved--;
         this->state = 0;
         // Serial.println("L");
         break;
@@ -109,6 +123,7 @@ inline void StepperDrive :: myISR(void)
         // Step = 1; Dir = 1
         digitalWrite(STEP_PIN, INVERT_STEP_PIN ^ LOW);
         this->stepsToMove--;
+        this->stepsMoved++;
         this->state = 1;
         // Serial.println("L");
         break;

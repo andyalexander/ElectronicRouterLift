@@ -41,7 +41,11 @@
 // SENSORS
 #define SENSOR_TOP   A0
 #define USE_SENSOR_TOP  true
-#define SENSOR_TOP_THRESHOLD 100
+#define SENSOR_TOP_THRESHOLD 80
+#define SENSOR_TOP_CLEAR_READS 100            // number of readings consecutively to clear flag. tune to remove jitter
+
+// Other properties
+#define MAX_TRAVEL 200
 
 //================================================================================
 //                               CPU / TIMING
