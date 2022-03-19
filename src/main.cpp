@@ -16,7 +16,7 @@
 #define TM_DIO        9
 
 const unsigned long LOOP_DELAY_MICROS = 100000; //(1000 / UI_REFRESH_RATE_HZ) * 1000;
-const unsigned long  ISR_DELAY_MICROS = 200;
+const unsigned long  ISR_DELAY_MICROS = 150;
 unsigned long lastTimeISR;
 unsigned long lastTimeUI;
 

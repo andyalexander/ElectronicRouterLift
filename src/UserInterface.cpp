@@ -126,8 +126,7 @@ void UserInterface :: loop( void )
             controlPanel->setHeightDelta(0.0);
             controlPanel->setHeightCurrent(this->heightCurrent);
         }
-    }
-    
+    } 
 
     // read keypresses from the control panel
     keys = controlPanel->getKeys();
@@ -135,7 +134,7 @@ void UserInterface :: loop( void )
     // respond to keypresses
     if( keys.bit.SET_ZERO)
     {
-        Serial.println("Zero...");
+        Serial.println("Key: Zero");
         // if (this->isReady)
         if (this->core->isReady())
         {
@@ -149,7 +148,7 @@ void UserInterface :: loop( void )
 
     if (keys.bit.TOGGLE_STEP)
     {
-        Serial.println("Press: toggle step");
+        Serial.println("Key: toggle step");
         // Serial.println(this->heightStep);
 
         if ( this->heightStep == HEIGHT_STEP_LARGE ) 
@@ -160,11 +159,12 @@ void UserInterface :: loop( void )
             this->heightStep = HEIGHT_STEP_LARGE;
         }
 
-        this->updateLED();
+        // this->updateLED();
     }
     
     if( keys.bit.UP )
     {
+        Serial.println("Key: UP");
         // if (this->isReady)
         if (this->core->isReady() && !this->core->getLimitState())          // only move up if not at limit
         {
@@ -177,6 +177,7 @@ void UserInterface :: loop( void )
     }
     if( keys.bit.DOWN )
     {
+        Serial.println("Key: DOWN");
         // if (this->isReady)
         if (this->core->isReady())
         {
@@ -204,35 +205,20 @@ void UserInterface :: loop( void )
 
     if ( keys.bit.GO_TARGET)
     {
+        Serial.println("Key: GO");
         // if (this->isReady && this->heightTarget != this->heightCurrent)
         if (this->core->isReady() && this->heightTarget != this->heightCurrent)
         {
             this->isReady = false;
             core->setHeightDelta(this->heightTarget - this->heightCurrent);
 
-            // this->updateLED();  
-
-            Serial.print("Go...");
             this->startMicros = micros();
             this->startSteps = core->getStepsFromHeight(this->heightTarget - this->heightCurrent);
         }    
     }
 
     if (keys.bit.FULL_RAISE){
-        Serial.println("Full raise");       // go to either limit
-
-        // double target = 0;
-        
-        // if (this->heightHome == MAX_TRAVEL) {
-        //     this->heightHome = this->heightCurrent;
-        //     target = MAX_TRAVEL;
-        // }
-        // else {
-        //     target = this->heightHome;
-        //     this->heightHome = MAX_TRAVEL;
-        // }
-
-        // core->setHeightDelta(MAX_TRAVEL);
+        Serial.println("Key: Full raise");       // go to either limit
 
         int32_t prevMoved = this->core->stepperDrive->getStepsMoved();
         this->core->stepperDrive->resetStepsMoved();
@@ -249,10 +235,9 @@ void UserInterface :: loop( void )
         double height = core->getHeightFromSteps(toMove);
         Serial.println(height);
         core->setHeightDelta(height);
-        // core->stepperDrive->setStepsToMove(toMove);
     }
 
-    // write data out to the display
+    // finally write data out to the display
     this->updateLED();
     controlPanel->refresh();
 }

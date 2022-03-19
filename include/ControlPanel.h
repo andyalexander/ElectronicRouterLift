@@ -8,9 +8,9 @@ struct LED_BITS
 {
     uint16_t POWER:1;
     uint16_t LIMIT:1;
-    uint16_t STEP_BIG:1;
+    uint16_t PROBE:1;
     uint16_t STEP_SMALL:1;
-    uint16_t LED5:1;
+    uint16_t STEP_BIG:1;
     uint16_t LED6:1;
     uint16_t LED7:1;
     uint16_t READY:1;

@@ -30,7 +30,6 @@ double StepperDrive :: getHeightFromSteps(int32_t steps)
 
 }
 
-
 void StepperDrive :: initHardware(void)
 {
     pinMode(STEP_PIN, OUTPUT);

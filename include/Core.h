@@ -105,14 +105,15 @@ inline void Core :: myISR( void )
     if (getLimitState())
     {
         digitalWrite(LED_BUILTIN, HIGH);
-        // this->stepperDrive->powerSet(false);         // stop the motor if at limit
 
         if (this->isHoming) {
             this->cancelHome();
+            Serial.println("Was homing, cancelled");
         }
         else if (stepperDrive->getStepsRemaining() > 0) {          // we are trying to go up, so not ok
             stepperDrive->setStepsToMove(0);
             heightDelta = 0.0;
+            Serial.println("At limit, but still have steps remaining, clearing");
         }
         // Serial.println("Sensor tripped");
     }
@@ -121,24 +122,19 @@ inline void Core :: myISR( void )
         digitalWrite(LED_BUILTIN,LOW);
     }
 
-    // we are homing so introduce a step
-    // if (this->isGoingHome){
-        // heightDelta = 1;
-    // }
-
     // if we need have a movement request from UI
     if( abs(heightDelta) > 0.01) {           
-        // Serial.print("Need to move: ");
-        // Serial.print(heightDelta);
+        Serial.print("Need to move: ");
+        Serial.print(heightDelta);
 
         // calculate the desired stepper position
-        int32_t desiredSteps =  stepperDrive->getStepsFromHeight(heightDelta);
+        int32_t desiredSteps = stepperDrive->getStepsFromHeight(heightDelta);
         heightDelta = 0.0;                  // reset the height delta as have converted to steps
 
         stepperDrive->setStepsToMove(desiredSteps);
-        // Serial.print(" (");
-        // Serial.print(desiredSteps);
-        // Serial.println("steps)");
+        Serial.print(" (");
+        Serial.print(desiredSteps);
+        Serial.println("steps)");
     }
 
     // if we need to move physical steps
@@ -150,7 +146,5 @@ inline void Core :: myISR( void )
         isMove = false;
     }
 }
-
-
 
 #endif // __CORE_H
