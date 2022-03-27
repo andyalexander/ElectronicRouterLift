@@ -41,7 +41,10 @@ public:
 
     void goHome(void);
     void cancelHome(void);
+    
     bool getLimitState(void); // are we at a limit
+    bool getTopLimitState(void);
+    bool getBitLimitState(void);
 
     void powerToggle(void);
     bool getPowerState(void);

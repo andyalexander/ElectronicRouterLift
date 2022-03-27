@@ -47,7 +47,8 @@ LED_REG UserInterface::calculateLEDs()
 
     // and add a few of our own
     leds.bit.POWER = this->core->getPowerState();
-    leds.bit.LIMIT = this->core->getLimitState();
+    leds.bit.LIMIT = this->core->getTopLimitState();
+    leds.bit.PROBE = this->core->getBitLimitState();
     leds.bit.STEP_BIG = this->heightStep == HEIGHT_STEP_LARGE;
     leds.bit.STEP_SMALL = !leds.bit.STEP_BIG;
     leds.bit.READY = this->isReady;
@@ -166,7 +167,7 @@ void UserInterface :: loop( void )
     {
         Serial.println("Key: UP");
         // if (this->isReady)
-        if (this->core->isReady() && !this->core->getLimitState())          // only move up if not at limit
+        if (this->core->isReady() && !this->core->getTopLimitState())          // only move up if not at top limit
         {
             if (this->heightPrevious == 999.9){this->heightPrevious = this->heightCurrent;}
 
@@ -225,7 +226,7 @@ void UserInterface :: loop( void )
 
         int32_t toMove = this->core->stepperDrive->getStepsFromHeight(MAX_TRAVEL);
         if (this->core->getLimitState()){
-            Serial.println("homing, but at limit");
+            Serial.println("homing, but limit or probe triggered");
             toMove = -prevMoved;
             Serial.println(toMove);
         }

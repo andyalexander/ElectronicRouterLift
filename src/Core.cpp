@@ -28,8 +28,10 @@ bool Core :: getPowerState(void)
     return this->stepperDrive->getPowerState();
 }
 
-bool Core :: getLimitState(void)
+bool Core :: getTopLimitState(void)
 {
+    bool is_limit = false;
+
     if (USE_SENSOR_TOP)
     {
         int sensor_reading = analogRead(SENSOR_TOP);
@@ -38,7 +40,7 @@ bool Core :: getLimitState(void)
         if (sensor_reading < SENSOR_TOP_THRESHOLD) {
             //this->wasAtLimit = true;
             this->limitClearReads = SENSOR_TOP_CLEAR_READS;     // reset the counter
-            return true;
+            is_limit = true;
         }
         else {
             // check if we have been there before and not cleared yet
@@ -48,14 +50,32 @@ bool Core :: getLimitState(void)
             // Serial.println(this->limitClearReads);
 
             if (this->limitClearReads > 0){
-                return true;
-            }
-            else {
-                return false;
+                is_limit = true;
             }
         }
     }
-    else {return false;}
+    return is_limit;
+}
+
+bool Core :: getBitLimitState(void){
+    bool is_limit = false;
+
+    bool sensor_reading = !digitalRead(SENSOR_BIT);
+
+      Serial.println(sensor_reading);
+
+    if (sensor_reading) {
+        is_limit = true;
+    }
+    return is_limit;
+}
+
+bool Core :: getLimitState(void)
+{
+    bool topLimit = getTopLimitState();
+    bool bitLimit = getBitLimitState();
+
+    return (topLimit || bitLimit);
 }
 
 

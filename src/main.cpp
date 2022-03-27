@@ -10,11 +10,6 @@
 #include "UserInterface.h"
 
 
-// DISPLAY
-#define TM_STROBE     7
-#define TM_CLOCK      8
-#define TM_DIO        9
-
 const unsigned long LOOP_DELAY_MICROS = 100000; //(1000 / UI_REFRESH_RATE_HZ) * 1000;
 const unsigned long  ISR_DELAY_MICROS = 150;
 unsigned long lastTimeISR;
@@ -49,10 +44,8 @@ void setup() {
 
   pinMode(LED_BUILTIN, OUTPUT);
 
-  if (USE_SENSOR_TOP)
-  {
-    pinMode(SENSOR_TOP, INPUT_PULLUP); 
-  }
+  pinMode(SENSOR_TOP, INPUT_PULLUP); 
+  pinMode(SENSOR_BIT, INPUT_PULLUP);
 }
 
 void loop() {
